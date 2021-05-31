@@ -1,0 +1,98 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href="assets/css/common.css" rel="stylesheet"/>
+    <link href="assets/css/search.css" rel="stylesheet"/>
+    <link href="assets/css/info.css" rel="stylesheet"/>
+    <link href="assets/css/error.css" rel="stylesheet"/>
+    <title>Preview Product</title>
+</head>
+<body>
+    <header><h1 id="page-title">Home</h1></header>
+    <section id="root">
+        <nav id="search"></nav>
+        <div id="info"></div>
+        <section id="wrap"></section>
+        <div id="err"><div class="fof"><h1 id="err-message"></h1></div></div>
+    </section>
+    <script src="assets/js/common.js"></script>
+    <!-- <script src="assets/js/Api.js"></script> -->
+    <script src="components/search.js"></script>
+    <script src="components/table.js"></script>
+    <script src="components/info.js"></script>
+    <script src="components/error.js"></script>
+    <script>
+        window.onload = () => {
+            let treatmentID = null, hospitalID = null, patientID = null, patientList = null, treatmentList = null
+
+            const setHospitalID = id => { hospitalID = id; rendering('patients') }
+            const setPatientID = id => { patientID = id; rendering('treatments') }
+            const setTreatmentID = id => { treatmentID = id; rendering('treatment-detail') }
+            
+            const table = new Table({ target : 'wrap', })
+            const error = new ErrorPage({ target : 'err', inner : 'err-message' })
+            const info = new Info({target : 'info'})
+            const treatment = new Treatment({})
+            const search = new Search({
+                target : 'search',
+                onSubmit : val => {
+                    Api('/hospital', {id : val}).then(res => {
+                        if(res.status !== 200) {
+                            error.setState(`${res.status} ERROR`)
+                            error.display(true)
+                        }
+                        else {
+                            error.display(false)
+                            setHospitalID(res.ID)
+                            info.setState({name : res.hospitalName, number : res.tel})
+                        }
+                    })
+                }
+            })
+
+            const rendering = state => {
+                switch(state) {
+                    case 'patients':
+                        treatment.display(false)
+                        table.setClickEvent(idx => { if(patientList[idx] && patientList[idx].id) setPatientID(patientList[idx].id) })
+                        table.setColumns(['idx', 'id', 'name', 'birth', 'sex', 'address'])                        
+                        Api('/oviewm/patient/list', {hospitalId : hospitalID}).then(res => {
+                            if(res.state !== 200) { 
+                                error.setState(`${res.state} ERROR`)
+                                error.display(true)
+                            } 
+                            else {
+                                patientList = res.PatientList
+                                error.display(false)
+                                table.setState(patientList)
+                            }
+                        }); table.display(true)
+                        break;
+                    case 'treatments':
+                    treatment.display(false)
+                        table.setClickEvent(idx => { if(treatmentList[idx] && treatmentList[idx].id) setTreatmentID(treatmentList[idx].id) })
+                        table.setColumns(['idx', 'id', 'date'])
+                        Api('/patient/treatment', {treatmentId : treatmentID}).then(res => {
+                            if(res.state !== 200) {
+                                error.setState(`${res.state} ERROR`)
+                                error.display(true)
+                            } 
+                            else {
+                                treatmentList = res.treatmentList
+                                error.display(false)
+                                table.setState(treatmentList)
+                            }
+                        }); table.display(true)
+                        break;  //합칠 수 있음
+                    case 'treatment-detail':
+                        table.display(false)
+                        
+                        break;
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

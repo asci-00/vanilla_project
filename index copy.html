@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href="assets/css/common.css" rel="stylesheet"/>
+    <link href="assets/css/search.css" rel="stylesheet"/>
+    <link href="assets/css/info.css" rel="stylesheet"/>
+    <link href="assets/css/error.css" rel="stylesheet"/>
+    <title>Preview Product</title>
+</head>
+<body>
+    <header><h1 id="page-title">Home</h1></header>
+    <section id="root">
+        <nav id="search"></nav>
+        <div id="profile">
+            <div class="user-info">
+            <div class="profile-pic"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/584938/bg_33.png">
+            </div>
+            <div class="username">
+                <div class="name"><span class="verified"></span>@John Doe</div>
+                <div class="about">Frontend developer and coffee lover</div>
+            </div>
+            </div>
+        </div>
+        <section id="wrap"></section>
+        <div id="err"><div class="fof"><h1 id="err-message"></h1></div></div>
+    </section>
+    <script src="assets/js/common.js"></script>
+    <!-- <script src="assets/js/Api.js"></script> -->
+    <script src="components/search.js"></script>
+    <script src="components/table.js"></script>
+    <script src="components/info.js"></script>
+    <script src="components/error.js"></script>
+    <script>
+        window.onload = () => {
+            const table = new Table({ target : 'wrap', })
+            table.setColumns(['idx', 'id', 'name', 'birth', 'sex', 'address'])  
+            table.setState([
+                [1, 2, 3, 4, 5, 6]
+            ])                      
+            table.display(true)
+        }
+    </script>
+</body>
+
+</html>
