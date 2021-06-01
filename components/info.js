@@ -1,21 +1,14 @@
 class Info {
-    constructor({target}) {
-
+    constructor({target, name_id, number_id}) {
+        this.target = document.getElementById(target)
+        this.name = document.getElementById(name_id)
+        this.number = document.getElementById(number_id)
     }
     setState({name, number}) {
-
+        this.name.innerHTML = name
+        this.number.innerHTML = number
     }
-    getStructor() {
-        return (`
-        <div id="profile">
-            <div class="user-info">
-            <div class="profile-pic"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/584938/bg_33.png">
-            </div>
-            <div class="username">
-                <div class="name"><span class="verified"></span>@John Doe</div>
-                <div class="about">Frontend developer and coffee lover</div>
-            </div>
-            </div>
-        </div>`)
+    display(flag) { if(this.target) { 
+        flag ? this.target.style.display = 'block' : this.target.style.display = 'none' }
     }
 }

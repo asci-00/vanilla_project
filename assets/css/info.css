@@ -1,7 +1,7 @@
 #profile {
     background-color: white;
     border-radius: 2px;
-    display: block;
+    display: none;
     float: none;
     margin: 130px auto 0 auto;
     padding-bottom: 20px;
@@ -27,6 +27,7 @@
     height: 210px;
     overflow: hidden;
     transform: translateX(-50%) translateY(-50%);
+    background:#fff;
     width: 210px;
     top: 0;
 }

@@ -1,7 +1,7 @@
 class Search {
     constructor({target, onSubmit}) {
-        this.onSubmit = onSubmit
         this.target = document.getElementById(target)
+        this.onSubmit = onSubmit
         this.target.innerHTML = ''
         this.setInputForm()
     }
