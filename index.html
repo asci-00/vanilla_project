@@ -4,10 +4,10 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link href="assets/css/common.css" rel="stylesheet"/>
     <link href="assets/css/search.css" rel="stylesheet"/>
-    <link href="assets/css/info.css" rel="stylesheet"/>
+    <link href="assets/css/result.css" rel="stylesheet"/>
     <link href="assets/css/error.css" rel="stylesheet"/>
     <link href="assets/css/table.css" rel="stylesheet"/>
-    <link href="assets/css/result.css" rel="stylesheet"/>
+    <link href="assets/css/info.css" rel="stylesheet"/>
     <title>Preview Product</title>
 </head>
 <body>
@@ -26,8 +26,10 @@
             </div>
             </div>
         </div>
-        <section id="wrap"></section>
-        <div class="result-box"></div>
+        <section id="wrap">
+            <div id="title"></div>
+            <section id="content"></section>
+        </section>
         <div id="err"><div class="fof"><h1 id="err-message"></h1></div></div>
     </section>
     <script src="assets/js/common.js"></script>
@@ -39,83 +41,91 @@
     <script src="components/treatment.js"></script>
     <script>
         window.onload = () => {
-            let treatmentID = null, hospitalID = null, patientIDX = null, patientList = null, treatmentList = null
+            let treatmentID = null, 
+                hospitalID = null, 
+                patientIDX = null, 
+                patientList = null, 
+                treatmentList = null
 
-            const setHospitalID = id => {  hospitalID = id; rendering('patients') }
-            const setPatientIDX = idx => { patientIDX = idx; rendering('treatments') }
-            const setTreatmentID = id => { treatmentID = id; rendering('treatment-detail') }
+            const   setHospitalID = id => {  hospitalID = id; rendering('patients') },
+                    setPatientIDX = idx => { patientIDX = idx; rendering('treatments') },
+                    setTreatmentID = id => { treatmentID = id; rendering('treatment-detail') }
 
-            const table = new Table({ target : 'wrap' })
-            const error = new ErrorPage({ target : 'err', inner : 'err-message' })
-            const info = new Info({
-                target : 'profile',
-                name_id : 'hName',
-                number_id : 'number'
-            })
-            const search = new Search({
-                target : 'search',
-                onSubmit : val => {
-                    Api('/hospital', {id : val}).then(res => {
-                        if(res.status) {
-                            error.setState(`${res.status} ERROR`)
-                            error.display(true)
+            const   table = new Table({ target : 'content' }),
+                    error = new ErrorPage({ target : 'err', inner : 'err-message' }),
+                    treatment = new Treatment({ target : 'content', error}),
+                    info = new Info({
+                        target : 'profile',
+                        name_id : 'hName',
+                        number_id : 'number'
+                    }),
+                    search = new Search({
+                        target : 'search',
+                        onSubmit : val => {
+                            Api('/hospital', {id : val}).then(res => {
+                                if(res.status) {
+                                    error.setState(`${res.status} ERROR`)
+                                    error.display(true)
+                                }
+                                else {
+                                    error.display(false)
+                                    setHospitalID(res.id)
+                                    info.setState({name : res.hospitalName, number : res.tel})
+                                    info.display(true)
+                                }
+                            })
                         }
-                        else {
-                            error.display(false)
-                            setHospitalID(res.id)
-                            info.display(true)
-                            info.setState({name : res.hospitalName, number : res.tel})
-                        }
-                    })
-                }
-            })
+                    }), title = document.getElementById('title')
 
             const rendering = state => {
                 switch(state) {
                     case 'patients':
-                        // treatment.display(false)
-                        table.setTitle('환자 목록')
+                        treatment.display(false)                        
                         table.setClickEvent(idx => { 
                             if(patientList[idx]) setPatientIDX(idx)
                         })
                         table.setColumns(['id', 'name', 'residentRegistrationNumber', 'birth', 'phone', 'gender', 'address'])                        
                         Api('/patient', {hospitalId : hospitalID}).then(res => {
+                            
                             if(res.state) { 
                                 error.setState(`${res.state} ERROR`)
                                 error.display(true)
                             } 
                             else {
                                 patientList = res
+                                title.innerHTML = '환자 목록'
+                                title.style.display = 'block'
                                 error.display(false)
                                 table.setState(patientList.map(data => data['patient']))
                             }
-                        }); table.display(true)
-                        break;
+                        }); 
+                        table.display(true)
+                        break
                     case 'treatments':
-                        //treatment.display(false)
-                        table.setTitle('진료 목록')
+                        treatment.display(false)
                         table.setClickEvent(idx => { 
-                            if(patientList[patientIDX]['treatmentDate'][idx]) 
-                                setTreatmentID(patientList[patientIDX]['treatmentDate'][idx].id)
+                            if(patientList[patientIDX]['treatmentDate'][idx]) setTreatmentID(patientList[patientIDX]['treatmentDate'][idx].id)
                         })
                         table.setColumns(['id', 'treatmentDate'])
                         table.setState(patientList[patientIDX]['treatmentDate'])
-
-                        break;  //합칠 수 있음
+                        title.innerHTML = '진료 목록'
+                        title.style.display = 'block'
+                        break
                     case 'treatment-detail':
-                        table.display(false)
+                        table.display(false)                        
                         Api('/treatment/info', {treatmentId : treatmentID}).then(res => {
-                            if(res.state) { 
+                            if(res.state) {
                                 error.setState(`${res.state} ERROR`)
                                 error.display(true)
-                            } 
-                            else {
-                                patientList = res
-                                error.display(false)
-                                table.setState(patientList.map(data => data['patient']))
                             }
-                        });
-                        break;
+                            else {
+                                error.display(false)
+                                title.innerHTML = '진료 결과'
+                                title.style.display = 'block'
+                                treatment.setState(res['analyzes'])
+                            }
+                        })
+                        break
                 }
             }
         }
