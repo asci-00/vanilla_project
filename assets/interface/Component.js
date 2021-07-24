@@ -1,6 +1,7 @@
 class Component {
     constructor(element) { 
         this.target = document.getElementById(element)
+        this.component = null
         if(this.target === null) throw { message : `${element} is not dom id` }
     }
     constructor(element, state) {

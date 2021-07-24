@@ -1,4 +1,4 @@
-class ErrorPage {
+class ErrorPage extends Component{
     constructor({target, inner}) {
         this.target = document.getElementById(target)
         this.msgBox = document.getElementById(inner)
