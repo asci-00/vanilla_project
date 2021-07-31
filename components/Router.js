@@ -10,8 +10,12 @@ class Router {
         if(item) item.Component.applyDOM()
 
     }
-    appendChild({url, Component}) {
+    appendChild(url, component) {
         if(url && Component) this.children.push({url, Component})
         else throw { message : 'parameter error' }
+    }
+    appendChild(items) {
+        if(items.length === undefined) items.forEach(child => this.appendChlild(child.url, child.component))
+        else this.appendChild(items.url, items.component)
     }
 }
