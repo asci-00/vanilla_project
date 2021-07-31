@@ -1,5 +1,5 @@
 class Component {
-    constructor(element) { 
+    constructor(element) {
         this.target = document.getElementById(element)
         this.component = null
         if(this.target === null) throw { message : `${element} is not dom id` }
@@ -12,6 +12,5 @@ class Component {
         this.state = {...this.state, state}
         this.applyDOM()
     }
-    applyDOM() { /*변경사항 추적후 DOM에 반영 this.child.setState() => child에게 state 전파*/ }
-    getElementObject() { return this.root }
+    getElement() { return this.component }
 }
