@@ -2,7 +2,7 @@
 # Vanilla Project
 
 > 목적 Vanilla Javascript를 통해 Single Page Application를 구현해보자<br/>
-> React를 따라해보자!
+> React를 따라해보자! - 흉내만 내자~ 다 구현은 
 
 ![파일:React-icon.svg](https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/512px-React-icon.svg.png)
 
