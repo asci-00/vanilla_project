@@ -3,14 +3,15 @@ class Router {
         this.target = document.getElementById(element)
         if(this.target === null) throw { message : `${element} is not dom id` }
     }
-    push(url) {
+    changeURL(url) {
         this.target.innerHTML = ''
-        const item = this.router.find(child => child.url === url)
+        const item = this.children.find(child => child.url === url)
 
-        this.target.appendChild((item ? item.component.getElement() : null/*not found*/))
+        if(item) item.Component.applyDOM()
+
     }
     appendChild(url, component) {
-        if(url && component) this.router.push({url, component})
+        if(url && Component) this.children.push({url, Component})
         else throw { message : 'parameter error' }
     }
     appendChild(items) {
